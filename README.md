@@ -166,16 +166,17 @@ Folder output:
 ## 9. Struktur Proyek
 
 ```
-client/
+frontend/
   pages/          → Halaman publik & admin
   layouts/        → Layout termasuk AdminLayout
   components/     → Komponen UI & utilitas
-server/
+backend/
   index.ts        → Bootstrap Express
   routes/         → Endpoint publik + admin
   middleware/     → Auth & helper lainnya
 shared/           → Tipe TypeScript bersama (bila dibutuhkan)
-fix_database.sql  → Skrip inisialisasi database
+database/         → Skrip SQL tambahan (tambahan selain fix_database.sql)
+fix_database.sql  → Skrip inisialisasi database utama
 ```
 
 ---
