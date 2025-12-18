@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 
 type Stats = {
   products: number;
-  featured: number;
   faqs: number;
 };
 
@@ -13,14 +12,13 @@ export default function AdminDashboard() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [p, f, q] = await Promise.all([
+        const [p, q] = await Promise.all([
           fetch("/api/admin/products", authInit()).then((r) => r.json()),
-          fetch("/api/admin/featured", authInit()).then((r) => r.json()),
           fetch("/api/admin/faqs", authInit()).then((r) => r.json()),
         ]);
-        setStats({ products: p.length || 0, featured: f.length || 0, faqs: q.length || 0 });
+        setStats({ products: p.length || 0, faqs: q.length || 0 });
       } catch (err) {
-        setStats({ products: 0, featured: 0, faqs: 0 });
+        setStats({ products: 0, faqs: 0 });
       } finally {
         setLoading(false);
       }
@@ -34,9 +32,8 @@ export default function AdminDashboard() {
       {loading ? (
         <div>Loading...</div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-2">
           <StatCard title="Products" value={stats?.products ?? 0} />
-          <StatCard title="Featured" value={stats?.featured ?? 0} />
           <StatCard title="FAQ" value={stats?.faqs ?? 0} />
         </div>
       )}

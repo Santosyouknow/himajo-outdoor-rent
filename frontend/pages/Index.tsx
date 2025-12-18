@@ -4,11 +4,40 @@ import ProductCard from "@/components/ProductCard";
 import LinkedProductCard from "@/components/LinkedProductCard";
 import ChatButton from "@/components/ChatButton";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+function formatIDR(amount: number) {
+  const s = Math.max(0, Math.floor(amount || 0)).toString();
+  const withThousands = s.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return `Rp${withThousands},00`;
+}
 
 export default function Index() {
   const navigate = useNavigate();
   const [homeSearch, setHomeSearch] = useState("");
+  const [priceMap, setPriceMap] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/products")
+      .then((res) => (res.ok ? res.json() : Promise.reject()))
+      .then((data: { slug: string; price_idr: number }[]) => {
+        if (cancelled) return;
+        const mapped = Object.fromEntries(
+          (data ?? []).map((item) => [item.slug, formatIDR(item.price_idr)])
+        );
+        setPriceMap(mapped);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const getPrice = (slug: string | undefined, fallback: number) => {
+    if (slug && priceMap[slug]) return priceMap[slug];
+    return formatIDR(fallback);
+  };
   const horizontalImages = [
     // 1 road desert
     "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop",
@@ -150,29 +179,29 @@ export default function Index() {
               <LinkedProductCard 
                 image="https://api.builder.io/api/v1/image/assets/TEMP/208be56710a2d115cd501138320e25c246ad53eb?width=310"
                 title="The North Face Mountain Jacket"
-                price="Rp250.000,00"
+                price={getPrice("the-north-face-mountain-jacket", 250000)}
               />
               <LinkedProductCard 
                 image="https://api.builder.io/api/v1/image/assets/TEMP/5c688e440a665e556917aa56c0fa24da4bbe6e69?width=290"
                 title="Eiger Tigerclaw 2.5"
-                price="Rp250.000,00"
+                price={getPrice("eiger-tigerclaw-2-5", 250000)}
               />
               <LinkedProductCard 
                 image="https://api.builder.io/api/v1/image/assets/TEMP/9dd6db6f4fee10ae825e21667c78783fa855e9b3?width=320"
                 title="The North Face Antora Jacket"
-                price="Rp250.000,00"
+                price={getPrice("the-north-face-antora-jacket", 250000)}
                 badge="Best Seller"
               />
               <LinkedProductCard 
                 image="https://api.builder.io/api/v1/image/assets/TEMP/fcfff940210e8df6edbf64e250c8a7c182a05ed6?width=270"
                 title="The North Face Poffer Jacket"
-                price="Rp200.000,00"
+                price={getPrice("the-north-face-puffer-jacket", 200000)}
                 badge="Best Seller"
               />
               <LinkedProductCard 
                 image="https://api.builder.io/api/v1/image/assets/TEMP/f4031290ad76769b9bddf209c8a708f7fac5e776?width=314"
                 title="Jack Wolfskin Texapore shoes"
-                price="Rp200.000,00"
+                price={getPrice("jack-wolfskin-texapore-shoes", 200000)}
                 badge="Best Seller"
               />
             </div>
@@ -190,29 +219,29 @@ export default function Index() {
               <LinkedProductCard 
                 image="https://api.builder.io/api/v1/image/assets/TEMP/ccb0f76ee71dc5e537c6a22c8727913576481a49?width=260"
                 title="Tiger Across 1.0 Windproof"
-                price="Rp150.000,00"
+                price={getPrice("eiger-across-1-0-windproof", 150000)}
               />
               <LinkedProductCard 
                 image="https://api.builder.io/api/v1/image/assets/TEMP/db36a2773649881024d87525c788cc4e05a08c73?width=248"
                 title="Eiger Finder Insulation Jacket"
-                price="Rp150.000,00"
+                price={getPrice("eiger-finder-insulation-jacket", 150000)}
                 badge="New"
               />
               <LinkedProductCard 
                 image="https://api.builder.io/api/v1/image/assets/TEMP/e120df6f38866ede81318d26d74ae838d8cbae0f?width=270"
                 title="Jack Wolfskin Chiliy Morning"
-                price="Rp250.000,00"
+                price={getPrice("jack-wolfskin-chiliy-morning", 250000)}
               />
               <LinkedProductCard 
                 image="https://api.builder.io/api/v1/image/assets/TEMP/acb1227dd6f01a3a7642d032ae9f870f54a1027e?width=320"
                 title="Eiger Monocle 350"
-                price="Rp100.000,00"
+                price={getPrice(undefined, 100000)}
                 badge="New"
               />
               <LinkedProductCard 
                 image="https://api.builder.io/api/v1/image/assets/TEMP/a7dad69afae7a8a6bd3791278812ebbd75ce7fe3?width=326"
                 title="Eiger Stroll Section 3"
-                price="Rp100.000,00"
+                price={getPrice("eiger-stroll-section-3", 100000)}
                 badge="New"
               />
             </div>
@@ -236,29 +265,29 @@ export default function Index() {
               <LinkedProductCard 
                 image="https://api.builder.io/api/v1/image/assets/TEMP/bb1f49877412f34c45c5119436dc85dc08f17206?width=336"
                 title="Eiger Inferno Stove"
-                price="Rp200.000,00"
+                price={getPrice("eiger-inferno-stove", 200000)}
                 badge="Best Seller"
               />
               <LinkedProductCard 
                 image="https://api.builder.io/api/v1/image/assets/TEMP/471e407177b3d320a08de26b3e6db578f0a921ef?width=214"
                 title="Eiger Campfire Stove"
-                price="Rp50.000,00"
+                price={getPrice("eiger-campfire-stove", 50000)}
               />
               <LinkedProductCard 
                 image="https://api.builder.io/api/v1/image/assets/TEMP/6df4187d4279167c8ebc8bcdf34fe129b4cb0c71?width=276"
                 title="Consina Kettle"
-                price="Rp50.000,00"
+                price={getPrice("consina-kettle", 50000)}
                 badge="New"
               />
               <LinkedProductCard 
                 image="https://api.builder.io/api/v1/image/assets/TEMP/7625fe1d82448da4218259878661a01e73450b34?width=334"
                 title="Consina Cooking Set"
-                price="Rp100.000,00"
+                price={getPrice("consina-cooking-set", 100000)}
               />
               <LinkedProductCard 
                 image="https://api.builder.io/api/v1/image/assets/TEMP/2457b95d67406ec58af4f31440101718033d9f60?width=294"
                 title="Eiger Carabiner Mug"
-                price="Rp50.000,00"
+                price={getPrice(undefined, 50000)}
                 badge="Best Seller"
               />
             </div>
@@ -276,30 +305,30 @@ export default function Index() {
               <LinkedProductCard 
                 image="https://api.builder.io/api/v1/image/assets/TEMP/4980178d9a3888ce8fd72ddaa9ba09fdb74d6306?width=332"
                 title="Eiger Soluna Lantern"
-                price="Rp50.000,00"
+                price={getPrice(undefined, 50000)}
                 badge="New"
               />
               <LinkedProductCard 
                 image="https://api.builder.io/api/v1/image/assets/TEMP/30635d64dfa74cbdd1cc15124b2e3e2ca69d4de0?width=264"
                 title="Consina Light Lantern"
-                price="Rp50.000,00"
+                price={getPrice(undefined, 50000)}
               />
               <LinkedProductCard 
                 image="https://api.builder.io/api/v1/image/assets/TEMP/2237ef1ab81a2fac4f2acb8a8133198901a673c4?width=294"
                 title="Consina Flood Headlamp"
-                price="Rp150.000,00"
+                price={getPrice(undefined, 150000)}
                 badge="Best Seller"
               />
               <LinkedProductCard 
                 image="https://api.builder.io/api/v1/image/assets/TEMP/3b2aae45511ef3a0b5084059febc7257e5233953?width=204"
                 title="Consina Camping Lamp YY17"
-                price="Rp100.000,00"
+                price={getPrice(undefined, 100000)}
                 badge="Best Seller"
               />
               <LinkedProductCard 
                 image="https://api.builder.io/api/v1/image/assets/TEMP/bad9c4e1c761e3c73c93eacf3e4268402379b67c?width=308"
                 title="Consina Headlamp"
-                price="Rp100.000,00"
+                price={getPrice(undefined, 100000)}
               />
             </div>
             
